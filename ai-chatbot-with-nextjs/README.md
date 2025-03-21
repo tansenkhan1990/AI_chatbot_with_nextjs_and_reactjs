@@ -16,6 +16,9 @@
 
 
 ### if you want to use paid openai api key just replace the belows code /pages/api/index.ts 
+### this is mentioned as i developed my code with openrouter api keys
+### because its free so most of the time it exists the token 
+### but it should work for openai paid API and belows code will perfectly work with it 
 
 ## Example API Route Code
 
