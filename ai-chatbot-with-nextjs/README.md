@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+### Instructions 
+# clone the project 
+# go to it's root directory
+# npm run install <!-- to install dependencies -->
+# npm run dev <!-- to run the project -->
+# replace your key to .env file
+# Here i am using open router api keys for open ai because its free
+# but because of limitation i am getting belows error which is completely normal
 
-## Getting Started
+{
+  error: {
+    message: 'More credits are required to run this request. 16384 token capacity required, 4000 available. To increase, visit https://openrouter.ai/settings/credits and upgrade to a paid account',
+    code: 402
+  }
+}
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### if you want to use paid openai api key just replace the belows code /pages/api/index.ts 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+import { NextApiRequest, NextApiResponse } from "next";
+import OpenAI from "openai";
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+// Load API key securely from environment variables
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY, // Use OpenAI API key
+});
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+// Next.js API Route - Handles AI Chat Requests
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method Not Allowed" });
+  }
 
-## Learn More
+  try {
+    const  prompt  = req.body;
 
-To learn more about Next.js, take a look at the following resources:
+    if (!prompt || typeof prompt !== "string") {
+      return res.status(400).json({ error: "Valid prompt is required" });
+    }
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    console.log("🔹 Sending request to OpenAI with prompt:", prompt);
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o", // OpenAI's latest model
+      messages: [{ role: "user", content: prompt }],
+    });
 
-## Deploy on Vercel
+    if (!completion.choices || completion.choices.length === 0) {
+      return res.status(500).json({ error: "No response generated" });
+    }
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    return res.status(200).json({ response: completion.choices[0].message.content });
+  } catch (error: any) {
+    console.error("❌ OpenAI API Error:", error);
+    return res.status(500).json({
+      error: "Internal Server Error",
+      details: error.message || "Unknown error",
+    });
+  }
+}
