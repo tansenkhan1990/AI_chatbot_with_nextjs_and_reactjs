@@ -13,7 +13,7 @@ export default function Home() {
 
     let messages: string[] = [prompt];
     for (let i = 0; i < 10; i++) {
-      const response = await fetch("/api", {
+      const response = await fetch("/api/open-router", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: messages[messages.length - 1] }),
