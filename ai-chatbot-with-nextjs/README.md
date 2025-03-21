@@ -20,12 +20,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import OpenAI from "openai";
 
-// Load API key securely from environment variables
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // Use OpenAI API key
 });
 
-// Next.js API Route - Handles AI Chat Requests
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
