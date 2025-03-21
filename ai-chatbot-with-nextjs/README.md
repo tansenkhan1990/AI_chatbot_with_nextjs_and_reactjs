@@ -18,4 +18,4 @@
 ### if you want to use paid openai api key just /api/openai-api.ts instead of /api/open-router.ts 
 ### this is mentioned as i developed my code with openrouter api keys
 ### because its free so most of the time it exists the token 
-### but it should work for openai paid API and belows code will perfectly work with it 
+### but it should work for openai paid API and belows code will perfectly work with it /api/openai-api.ts
